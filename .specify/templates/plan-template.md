@@ -31,7 +31,15 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] Stack gate: Uses Spring Boot 3 and Java 17 only.
+- [ ] Security gate: Defines HTTP Basic Auth behavior (protected/public endpoints,
+  credential source, and non-dev override strategy).
+- [ ] Data gate: Uses PostgreSQL and defines Docker runtime (`docker-compose` or
+  equivalent) for local/CI validation.
+- [ ] API contract gate: Includes OpenAPI/Swagger update scope for all changed
+  endpoints/models/errors.
+- [ ] Config gate: Lists required `application.properties` keys and identifies
+  sensitive values externalized via env/secrets.
 
 ## Project Structure
 
