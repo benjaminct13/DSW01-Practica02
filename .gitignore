@@ -1,6 +1,7 @@
 # Java / Spring Boot
 target/
 build/
+.gradle/
 *.class
 *.jar
 *.war
@@ -30,3 +31,9 @@ __pycache__/
 
 # Docker / compose runtime
 *.pid
+
+# Dependencias 
+node_modules/
+
+# Cache de Angular (Evita el error de 100MB+ en GitHub)
+apps/frontend/.angular/

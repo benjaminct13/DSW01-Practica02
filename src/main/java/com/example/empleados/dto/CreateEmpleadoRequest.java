@@ -1,6 +1,7 @@
 package com.example.empleados.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class CreateEmpleadoRequest {
@@ -16,6 +17,10 @@ public class CreateEmpleadoRequest {
     @NotBlank(message = "telefono es obligatorio")
     @Size(max = 100, message = "telefono debe tener máximo 100 caracteres")
     private String telefono;
+
+    @NotBlank(message = "departamentoId es obligatorio")
+    @Pattern(regexp = "^D-[0-9]{3,}$", message = "departamentoId debe tener formato D-001")
+    private String departamentoId;
 
     public String getNombre() {
         return nombre;
@@ -39,5 +44,13 @@ public class CreateEmpleadoRequest {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public String getDepartamentoId() {
+        return departamentoId;
+    }
+
+    public void setDepartamentoId(String departamentoId) {
+        this.departamentoId = departamentoId;
     }
 }

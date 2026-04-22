@@ -1,9 +1,12 @@
 package com.example.empleados.service;
 
 import com.example.empleados.domain.EmpleadoEntity;
+import com.example.empleados.domain.DepartamentoEntity;
 import com.example.empleados.dto.CreateEmpleadoRequest;
+import com.example.empleados.dto.DepartamentoResumenResponse;
 import com.example.empleados.dto.EmpleadoResponse;
 import com.example.empleados.dto.UpdateEmpleadoRequest;
+import com.example.empleados.repository.DepartamentoRepository;
 import com.example.empleados.repository.EmpleadoRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -16,10 +19,16 @@ import java.util.NoSuchElementException;
 public class EmpleadoService {
 
     private final EmpleadoRepository empleadoRepository;
+    private final DepartamentoRepository departamentoRepository;
     private final ClaveEmpleadoGenerator claveEmpleadoGenerator;
 
-    public EmpleadoService(EmpleadoRepository empleadoRepository, ClaveEmpleadoGenerator claveEmpleadoGenerator) {
+    public EmpleadoService(
+        EmpleadoRepository empleadoRepository,
+        DepartamentoRepository departamentoRepository,
+        ClaveEmpleadoGenerator claveEmpleadoGenerator
+    ) {
         this.empleadoRepository = empleadoRepository;
+        this.departamentoRepository = departamentoRepository;
         this.claveEmpleadoGenerator = claveEmpleadoGenerator;
     }
 
@@ -30,6 +39,7 @@ public class EmpleadoService {
         entity.setNombre(request.getNombre().trim());
         entity.setDireccion(request.getDireccion().trim());
         entity.setTelefono(request.getTelefono().trim());
+        entity.setDepartamento(findDepartamento(request.getDepartamentoId()));
 
         try {
             EmpleadoEntity saved = empleadoRepository.save(entity);
@@ -59,6 +69,7 @@ public class EmpleadoService {
         empleado.setNombre(request.getNombre().trim());
         empleado.setDireccion(request.getDireccion().trim());
         empleado.setTelefono(request.getTelefono().trim());
+        empleado.setDepartamento(findDepartamento(request.getDepartamentoId()));
 
         EmpleadoEntity updated = empleadoRepository.save(empleado);
         return toResponse(updated);
@@ -78,6 +89,15 @@ public class EmpleadoService {
         response.setNombre(entity.getNombre());
         response.setDireccion(entity.getDireccion());
         response.setTelefono(entity.getTelefono());
+        DepartamentoResumenResponse departamento = new DepartamentoResumenResponse();
+        departamento.setId(entity.getDepartamento().getId());
+        departamento.setNombre(entity.getDepartamento().getNombre());
+        response.setDepartamento(departamento);
         return response;
+    }
+
+    private DepartamentoEntity findDepartamento(String departamentoId) {
+        return departamentoRepository.findById(departamentoId)
+            .orElseThrow(() -> new NoSuchElementException("Departamento no encontrado para id: " + departamentoId));
     }
 }

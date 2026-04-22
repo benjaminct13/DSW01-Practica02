@@ -51,6 +51,7 @@ class EmpleadoUpdateValidationTest {
         request.setNombre("Nombre");
         request.setDireccion("Direccion");
         request.setTelefono("123456");
+        request.setDepartamentoId("D-001");
 
         Set<ConstraintViolation<UpdateEmpleadoRequest>> violations = validator.validate(request);
         assertTrue(violations.isEmpty());

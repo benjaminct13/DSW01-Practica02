@@ -2,6 +2,7 @@ package com.example.empleados.contract;
 
 import com.example.empleados.controller.EmpleadoController;
 import com.example.empleados.dto.CreateEmpleadoRequest;
+import com.example.empleados.dto.DepartamentoResumenResponse;
 import com.example.empleados.dto.EmpleadoResponse;
 import com.example.empleados.service.EmpleadoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,10 @@ class EmpleadoCreateContractTest {
         response.setNombre("Juan Perez");
         response.setDireccion("Calle 1");
         response.setTelefono("123456");
+        DepartamentoResumenResponse departamento = new DepartamentoResumenResponse();
+            departamento.setId("D-001");
+        departamento.setNombre("General");
+        response.setDepartamento(departamento);
 
         when(empleadoService.create(any(CreateEmpleadoRequest.class))).thenReturn(response);
 
@@ -46,7 +51,8 @@ class EmpleadoCreateContractTest {
             {
               \"nombre\": \"Juan Perez\",
               \"direccion\": \"Calle 1\",
-              \"telefono\": \"123456\"
+                                                        \"telefono\": \"123456\",
+                                                        \"departamentoId\": \"D-001\"
             }
             """;
 
@@ -56,7 +62,8 @@ class EmpleadoCreateContractTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payload))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.clave").value("E-001"));
+            .andExpect(jsonPath("$.clave").value("E-001"))
+            .andExpect(jsonPath("$.departamento.id").value("D-001"));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.example.empleados.contract;
 
 import com.example.empleados.controller.EmpleadoController;
+import com.example.empleados.dto.DepartamentoResumenResponse;
 import com.example.empleados.dto.EmpleadoResponse;
 import com.example.empleados.dto.UpdateEmpleadoRequest;
 import com.example.empleados.service.EmpleadoService;
@@ -37,6 +38,10 @@ class EmpleadoWriteContractTest {
         response.setNombre("Nuevo");
         response.setDireccion("Nueva Dir");
         response.setTelefono("321");
+        DepartamentoResumenResponse departamento = new DepartamentoResumenResponse();
+        departamento.setId("D-001");
+        departamento.setNombre("General");
+        response.setDepartamento(departamento);
 
         when(empleadoService.update(any(String.class), any(UpdateEmpleadoRequest.class))).thenReturn(response);
 
@@ -44,7 +49,8 @@ class EmpleadoWriteContractTest {
             {
               \"nombre\": \"Nuevo\",
               \"direccion\": \"Nueva Dir\",
-              \"telefono\": \"321\"
+                                                        \"telefono\": \"321\",
+                                                        \"departamentoId\": \"D-001\"
             }
             """;
 
@@ -54,7 +60,8 @@ class EmpleadoWriteContractTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payload))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.nombre").value("Nuevo"));
+            .andExpect(jsonPath("$.nombre").value("Nuevo"))
+            .andExpect(jsonPath("$.departamento.id").value("D-001"));
     }
 
     @Test

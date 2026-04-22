@@ -34,12 +34,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException exception, HttpServletRequest request) {
-        return build(HttpStatus.BAD_REQUEST, "Data Integrity Error", exception.getMostSpecificCause().getMessage(), request.getRequestURI());
+        String message = exception.getMostSpecificCause() != null
+            ? exception.getMostSpecificCause().getMessage()
+            : exception.getMessage();
+        return build(HttpStatus.CONFLICT, "Conflict", message, request.getRequestURI());
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     ResponseEntity<ErrorResponse> handleNoSuchElement(NoSuchElementException exception, HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, "Not Found", exception.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException exception, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "Conflict", exception.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
