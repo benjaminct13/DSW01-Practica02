@@ -1,15 +1,11 @@
 <!--
 Sync Impact Report
-- Version change: template-unversioned → 1.0.0
+- Version change: 1.0.0 → 1.1.0
 - Modified principles:
-	- Template Principle 1 → I. Spring Boot 3 + Java 17 Baseline (NON-NEGOTIABLE)
-	- Template Principle 2 → II. Basic Authentication by Default
-	- Template Principle 3 → III. PostgreSQL via Docker as Standard Runtime
-	- Template Principle 4 → IV. API Contract Visibility with Swagger/OpenAPI
-	- Template Principle 5 → V. Configuration Discipline via application.properties
+	- V. Configuration Discipline via application.properties → V. Monorepo + Angular 19 Frontend Baseline (NON-NEGOTIABLE)
+	- Added new VI. Configuration Discipline via application.properties (renumbered from prior V)
 - Added sections:
-	- Technical Standards
-	- Development Workflow & Quality Gates
+	- Monorepo Structure Standards
 - Removed sections:
 	- None
 - Templates requiring updates:
@@ -55,7 +51,17 @@ codes MUST be documented and kept synchronized with implementation changes in th
 feature cycle.
 Rationale: explicit API contracts reduce integration errors and speed up testing.
 
-### V. Configuration Discipline via application.properties
+### V. Monorepo + Angular 19 Frontend Baseline (NON-NEGOTIABLE)
+The repository MUST be organized and maintained as a monorepo containing backend and
+frontend applications. The frontend application MUST use Angular 19 as its baseline
+framework version. New UI work MUST be implemented in Angular within the monorepo and
+MUST NOT introduce an alternative frontend framework without constitutional amendment.
+Cross-app contracts (API endpoints, DTOs, auth flows) MUST be versioned and validated
+as part of the same feature cycle.
+Rationale: monorepo coordination and a fixed frontend baseline reduce integration drift
+and make backend/frontend delivery predictable.
+
+### VI. Configuration Discipline via application.properties
 Spring Boot runtime configuration MUST be centralized in `application.properties`
 (and profile-specific variants where needed). Configuration keys for datasource,
 security, server port, and Swagger exposure MUST be explicitly defined. Sensitive
@@ -72,15 +78,28 @@ Rationale: predictable configuration management improves operability and securit
 - Docker artifacts (`Dockerfile`, `docker-compose.yml`) MUST be kept runnable for local
 	backend + PostgreSQL startup.
 
+## Monorepo Structure Standards
+
+- The monorepo MUST define separate top-level application directories for backend and
+	frontend (for example, `apps/backend` and `apps/frontend`) or an equivalent clearly
+	documented layout.
+- The frontend application MUST declare and maintain Angular 19 in its project manifest
+	and lockfile.
+- Shared contracts (OpenAPI specs, generated clients, or shared schemas) MUST reside in
+	a versioned location accessible to both backend and frontend workflows.
+- CI tasks MUST support targeted execution per app and full monorepo validation for
+	integration-critical changes.
+
 ## Development Workflow & Quality Gates
 
 - Every feature specification MUST include authentication behavior, database impact,
-	API documentation impact, and configuration impact.
+	API documentation impact, monorepo/frontend impact, and configuration impact.
 - Implementation plans MUST pass the Constitution Check before coding starts.
 - Pull requests MUST include evidence of:
 	- passing unit/integration tests,
 	- verified Basic Auth behavior,
 	- validated PostgreSQL connectivity in Docker runtime,
+	- validated Angular 19 frontend build/test impact when frontend code is touched,
 	- updated Swagger/OpenAPI documentation,
 	- updated `application.properties` keys when configuration changes.
 - Code review MUST reject changes that bypass any Core Principle.
@@ -103,7 +122,7 @@ Versioning policy (semantic):
 Compliance review expectations:
 - Every `/speckit.plan` MUST include a Constitution Check result.
 - Every `/speckit.tasks` output MUST include tasks for security, data, docs, and
-	configuration when applicable.
+	configuration, and monorepo coordination when applicable.
 - Reviewers MUST block merges that violate constitutional MUST statements.
 
-**Version**: 1.0.0 | **Ratified**: 2026-02-25 | **Last Amended**: 2026-02-25
+**Version**: 1.1.0 | **Ratified**: 2026-02-25 | **Last Amended**: 2026-03-11

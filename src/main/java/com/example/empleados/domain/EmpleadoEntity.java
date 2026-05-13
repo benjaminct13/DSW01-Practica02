@@ -3,6 +3,9 @@ package com.example.empleados.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,6 +24,10 @@ public class EmpleadoEntity {
 
     @Column(name = "telefono", nullable = false, length = 100)
     private String telefono;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "departamento_id", nullable = false)
+    private DepartamentoEntity departamento;
 
     public String getClave() {
         return clave;
@@ -52,5 +59,13 @@ public class EmpleadoEntity {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public DepartamentoEntity getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(DepartamentoEntity departamento) {
+        this.departamento = departamento;
     }
 }

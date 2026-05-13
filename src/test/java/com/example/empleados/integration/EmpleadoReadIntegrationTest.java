@@ -1,5 +1,7 @@
 package com.example.empleados.integration;
 
+import com.example.empleados.domain.DepartamentoEntity;
+import com.example.empleados.repository.DepartamentoRepository;
 import com.example.empleados.repository.EmpleadoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,20 +29,33 @@ class EmpleadoReadIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private EmpleadoRepository empleadoRepository;
 
+    @Autowired
+    private DepartamentoRepository departamentoRepository;
+
+    private String departamentoId;
+
     @BeforeEach
     void setup() {
         empleadoRepository.deleteAll();
+        departamentoRepository.deleteAll();
+
+        DepartamentoEntity departamento = new DepartamentoEntity();
+        departamento.setId("D-095");
+        departamento.setNombre("General");
+        departamento.setDescripcion("Base");
+        departamentoId = departamentoRepository.save(departamento).getId();
     }
 
     @Test
     void shouldReadByClaveAndList() throws Exception {
-        String payload = """
+                String payload = """
             {
               \"nombre\": \"Ana\",
               \"direccion\": \"Calle 2\",
-              \"telefono\": \"55555\"
+                            \"telefono\": \"55555\",
+                            \"departamentoId\": \"%s\"
             }
-            """;
+                        """.formatted(departamentoId);
 
         mockMvc.perform(post("/api/empleados")
                 .with(httpBasic("admin", "admin123"))
@@ -50,10 +65,12 @@ class EmpleadoReadIntegrationTest extends BaseIntegrationTest {
 
         mockMvc.perform(get("/api/empleados/E-001").with(httpBasic("admin", "admin123")))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.clave").value("E-001"));
+            .andExpect(jsonPath("$.clave").value("E-001"))
+            .andExpect(jsonPath("$.departamento.id").value(departamentoId));
 
         mockMvc.perform(get("/api/empleados").with(httpBasic("admin", "admin123")))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].clave").value("E-001"));
+            .andExpect(jsonPath("$[0].clave").value("E-001"))
+            .andExpect(jsonPath("$[0].departamento.id").value(departamentoId));
     }
 }

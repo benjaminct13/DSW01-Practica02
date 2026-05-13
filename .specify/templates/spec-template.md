@@ -95,14 +95,18 @@
 - **FR-008**: Persistent data changes MUST be compatible with PostgreSQL runtime in
   Docker-based local/CI environments.
 - **FR-009**: API changes MUST include synchronized OpenAPI/Swagger documentation.
-- **FR-010**: Configuration changes MUST specify affected `application.properties`
+- **FR-010**: Repository-impact changes MUST specify monorepo layout updates and
+  cross-app contract implications when backend/frontend are both involved.
+- **FR-011**: Frontend implementation MUST use Angular 19 for new and modified UI
+  features unless superseded by an approved constitutional amendment.
+- **FR-012**: Configuration changes MUST specify affected `application.properties`
   keys and secret externalization strategy.
 
 *Example of marking unclear requirements:*
 
-- **FR-011**: System MUST authenticate users via [NEEDS CLARIFICATION: public route
+- **FR-013**: System MUST authenticate users via [NEEDS CLARIFICATION: public route
   list and role model not specified].
-- **FR-012**: System MUST retain user data for [NEEDS CLARIFICATION: retention period
+- **FR-014**: System MUST retain user data for [NEEDS CLARIFICATION: retention period
   not specified].
 
 ### Key Entities *(include if feature involves data)*

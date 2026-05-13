@@ -17,6 +17,7 @@ node_modules/
 
 # Docker files
 .dockerignore
+Dockerfile*
 
 # Tests / coverage
 coverage/

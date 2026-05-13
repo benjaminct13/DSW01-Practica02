@@ -1,5 +1,7 @@
 package com.example.empleados.integration;
 
+import com.example.empleados.domain.DepartamentoEntity;
+import com.example.empleados.repository.DepartamentoRepository;
 import com.example.empleados.repository.EmpleadoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,20 +31,33 @@ class EmpleadoWriteIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private EmpleadoRepository empleadoRepository;
 
+    @Autowired
+    private DepartamentoRepository departamentoRepository;
+
+    private String departamentoId;
+
     @BeforeEach
     void setup() {
         empleadoRepository.deleteAll();
+        departamentoRepository.deleteAll();
+
+        DepartamentoEntity departamento = new DepartamentoEntity();
+        departamento.setId("D-094");
+        departamento.setNombre("General");
+        departamento.setDescripcion("Base");
+        departamentoId = departamentoRepository.save(departamento).getId();
     }
 
     @Test
     void shouldUpdateAndDeleteEmployee() throws Exception {
-        String createPayload = """
+                String createPayload = """
             {
               \"nombre\": \"Ana\",
               \"direccion\": \"Calle 2\",
-              \"telefono\": \"55555\"
+                            \"telefono\": \"55555\",
+                            \"departamentoId\": \"%s\"
             }
-            """;
+                        """.formatted(departamentoId);
 
         mockMvc.perform(post("/api/empleados")
                 .with(httpBasic("admin", "admin123"))
@@ -50,20 +65,22 @@ class EmpleadoWriteIntegrationTest extends BaseIntegrationTest {
                 .content(createPayload))
             .andExpect(status().isCreated());
 
-        String updatePayload = """
+                String updatePayload = """
             {
               \"nombre\": \"Ana Maria\",
               \"direccion\": \"Calle 3\",
-              \"telefono\": \"77777\"
+                            \"telefono\": \"77777\",
+                            \"departamentoId\": \"%s\"
             }
-            """;
+                        """.formatted(departamentoId);
 
         mockMvc.perform(put("/api/empleados/E-001")
                 .with(httpBasic("admin", "admin123"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatePayload))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.nombre").value("Ana Maria"));
+            .andExpect(jsonPath("$.nombre").value("Ana Maria"))
+            .andExpect(jsonPath("$.departamento.id").value(departamentoId));
 
         mockMvc.perform(delete("/api/empleados/E-001").with(httpBasic("admin", "admin123")))
             .andExpect(status().isNoContent());

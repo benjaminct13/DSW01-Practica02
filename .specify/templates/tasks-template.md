@@ -20,10 +20,10 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+- **Monorepo (default)**: `apps/backend/`, `apps/frontend/`, `packages/contracts/`
+- **Backend-only exception**: `src/`, `tests/` at repository root (requires explicit justification)
+- **Mobile monorepo**: `apps/api/`, `apps/mobile-*`, `packages/contracts/`
+- Paths shown below assume monorepo - adjust based on plan.md structure
 
 <!-- 
   ============================================================================
@@ -50,8 +50,9 @@ description: "Task list template for feature implementation"
 
 - [ ] T001 Create project structure per implementation plan
 - [ ] T002 Initialize Java 17 Spring Boot 3 project dependencies
-- [ ] T003 [P] Configure code quality tools and build plugins
-- [ ] T004 [P] Configure base `application.properties` and profile variants
+- [ ] T003 Initialize Angular 19 frontend workspace/app dependencies
+- [ ] T004 [P] Configure code quality tools and build plugins for backend + frontend
+- [ ] T005 [P] Configure base `application.properties` and profile variants
 
 ---
 
@@ -63,13 +64,14 @@ description: "Task list template for feature implementation"
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T005 Setup PostgreSQL schema and migration framework (Flyway/Liquibase)
-- [ ] T006 [P] Configure Docker runtime for backend + PostgreSQL (`docker-compose`)
-- [ ] T007 [P] Implement HTTP Basic Authentication with configurable credentials
-- [ ] T008 [P] Setup API routing, exception handling, and security filters
-- [ ] T009 Create base models/entities that all stories depend on
-- [ ] T010 Enable and configure Swagger/OpenAPI endpoints
-- [ ] T011 Setup environment configuration and secret externalization
+- [ ] T006 Setup PostgreSQL schema and migration framework (Flyway/Liquibase)
+- [ ] T007 [P] Configure Docker runtime for backend + PostgreSQL (`docker-compose`)
+- [ ] T008 [P] Implement HTTP Basic Authentication with configurable credentials
+- [ ] T009 [P] Setup API routing, exception handling, and security filters
+- [ ] T010 Create base models/entities that all stories depend on
+- [ ] T011 Enable and configure Swagger/OpenAPI endpoints
+- [ ] T012 Setup environment configuration and secret externalization
+- [ ] T013 [P] Create shared contract package workflow for backend/frontend
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -85,17 +87,19 @@ Examples of foundational tasks (adjust based on your project):
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T012 [P] [US1] Contract test for [endpoint] in tests/contract/[name]
-- [ ] T013 [P] [US1] Integration test for [user journey] with PostgreSQL runtime in tests/integration/[name]
+- [ ] T014 [P] [US1] Contract test for [endpoint] in apps/backend/tests/contract/[name]
+- [ ] T015 [P] [US1] Integration test for [user journey] with PostgreSQL runtime in apps/backend/tests/integration/[name]
 
 ### Implementation for User Story 1
 
-- [ ] T014 [P] [US1] Create [Entity1] model in src/main/java/.../domain/[Entity1].java
-- [ ] T015 [P] [US1] Create [Entity2] model in src/main/java/.../domain/[Entity2].java
-- [ ] T016 [US1] Implement [Service] in src/main/java/.../service/[Service].java (depends on T014, T015)
-- [ ] T017 [US1] Implement [endpoint/feature] in src/main/java/.../controller/[Controller].java
-- [ ] T018 [US1] Update Swagger/OpenAPI annotations/spec for US1 endpoints
-- [ ] T019 [US1] Add validation, error handling, and logs for user story 1 operations
+- [ ] T016 [P] [US1] Create [Entity1] model in apps/backend/src/main/java/.../domain/[Entity1].java
+- [ ] T017 [P] [US1] Create [Entity2] model in apps/backend/src/main/java/.../domain/[Entity2].java
+- [ ] T018 [US1] Implement [Service] in apps/backend/src/main/java/.../service/[Service].java (depends on T016, T017)
+- [ ] T019 [US1] Implement [endpoint/feature] in apps/backend/src/main/java/.../controller/[Controller].java
+- [ ] T020 [US1] Implement Angular 19 UI flow in apps/frontend/src/app/features/[feature]
+- [ ] T021 [US1] Update shared contracts and generated frontend client in packages/contracts/
+- [ ] T022 [US1] Update Swagger/OpenAPI annotations/spec for US1 endpoints
+- [ ] T023 [US1] Add validation, error handling, and logs for user story 1 operations
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -109,15 +113,16 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T020 [P] [US2] Contract test for [endpoint] in tests/contract/[name]
-- [ ] T021 [P] [US2] Integration test for [user journey] in tests/integration/[name]
+- [ ] T024 [P] [US2] Contract test for [endpoint] in apps/backend/tests/contract/[name]
+- [ ] T025 [P] [US2] Integration test for [user journey] in apps/backend/tests/integration/[name]
 
 ### Implementation for User Story 2
 
-- [ ] T022 [P] [US2] Create [Entity] model in src/main/java/.../domain/[Entity].java
-- [ ] T023 [US2] Implement [Service] in src/main/java/.../service/[Service].java
-- [ ] T024 [US2] Implement [endpoint/feature] in src/main/java/.../controller/[Controller].java
-- [ ] T025 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T026 [P] [US2] Create [Entity] model in apps/backend/src/main/java/.../domain/[Entity].java
+- [ ] T027 [US2] Implement [Service] in apps/backend/src/main/java/.../service/[Service].java
+- [ ] T028 [US2] Implement [endpoint/feature] in apps/backend/src/main/java/.../controller/[Controller].java
+- [ ] T029 [US2] Implement Angular 19 UI updates in apps/frontend/src/app/features/[feature]
+- [ ] T030 [US2] Integrate with User Story 1 components (if needed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -131,14 +136,15 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T026 [P] [US3] Contract test for [endpoint] in tests/contract/[name]
-- [ ] T027 [P] [US3] Integration test for [user journey] in tests/integration/[name]
+- [ ] T031 [P] [US3] Contract test for [endpoint] in apps/backend/tests/contract/[name]
+- [ ] T032 [P] [US3] Integration test for [user journey] in apps/backend/tests/integration/[name]
 
 ### Implementation for User Story 3
 
-- [ ] T028 [P] [US3] Create [Entity] model in src/main/java/.../domain/[Entity].java
-- [ ] T029 [US3] Implement [Service] in src/main/java/.../service/[Service].java
-- [ ] T030 [US3] Implement [endpoint/feature] in src/main/java/.../controller/[Controller].java
+- [ ] T033 [P] [US3] Create [Entity] model in apps/backend/src/main/java/.../domain/[Entity].java
+- [ ] T034 [US3] Implement [Service] in apps/backend/src/main/java/.../service/[Service].java
+- [ ] T035 [US3] Implement [endpoint/feature] in apps/backend/src/main/java/.../controller/[Controller].java
+- [ ] T036 [US3] Implement Angular 19 UI updates in apps/frontend/src/app/features/[feature]
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -155,9 +161,9 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in src/test/java/
+- [ ] TXXX [P] Additional unit tests (if requested) in apps/backend/src/test/java/ and apps/frontend/src/
 - [ ] TXXX Security hardening
-- [ ] TXXX Validate Basic Auth + PostgreSQL Docker + Swagger after integration
+- [ ] TXXX Validate Basic Auth + PostgreSQL Docker + Swagger + Angular 19 build/test after integration
 - [ ] TXXX Run quickstart.md validation
 
 ---
