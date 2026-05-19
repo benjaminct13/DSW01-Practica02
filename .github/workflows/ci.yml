@@ -98,6 +98,10 @@ jobs:
         working-directory: apps/frontend
         run: npm install
 
+      - name: Fix ng permissions
+        working-directory: apps/frontend
+        run: chmod +x node_modules/.bin/ng
+
       - name: Build frontend
         working-directory: apps/frontend
-        run: ./node_modules/.bin/ng build
+        run: node_modules/.bin/ng build
