@@ -96,7 +96,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: apps/frontend
-        run: npm install
+        run: npm ci
 
       - name: Fix ng permissions
         working-directory: apps/frontend
