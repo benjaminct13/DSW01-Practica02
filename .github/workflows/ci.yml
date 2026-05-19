@@ -70,9 +70,9 @@ jobs:
         working-directory: apps/frontend
         run: npm install
 
-      - name: Resolve Chrome binary for tests
+      - name: Install Chromium for tests
+        run: npx puppeteer browsers install chrome
         working-directory: apps/frontend
-        run: echo "CHROME_BIN=$(node -e \"console.log(require('puppeteer').executablePath())\")" >> "$GITHUB_ENV"
 
       - name: Run frontend unit tests
         working-directory: apps/frontend
