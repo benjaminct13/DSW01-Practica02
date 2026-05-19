@@ -70,9 +70,11 @@ jobs:
         working-directory: apps/frontend
         run: npm install
 
-      - name: Install Chromium for tests
-        run: npx puppeteer browsers install chrome
-        working-directory: apps/frontend
+      - name: Install Chromium
+        run: sudo apt-get install -y chromium-browser
+
+      - name: Set Chrome bin
+        run: echo "CHROME_BIN=/usr/bin/chromium-browser" >> $GITHUB_ENV
 
       - name: Run frontend unit tests
         working-directory: apps/frontend
