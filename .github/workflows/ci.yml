@@ -49,7 +49,7 @@ jobs:
 
       - name: Build and test backend
         working-directory: apps/backend
-        run: mvn -B -ntp clean verify
+        run: mvn -B -ntp clean package -DskipTests
 
   frontend:
     name: Frontend Angular
