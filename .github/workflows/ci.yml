@@ -59,14 +59,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
         with:
-          projectBaseDir: apps/backend
-          args: >-
-            -Dsonar.organization=benjaminct13
-            -Dsonar.projectKey=benjaminct13_DSW01-Practica02
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: SonarCloud Analysis
+        working-directory: apps/backend
+        run: mvn -B sonar:sonar -Dsonar.projectKey=benjaminct13_DSW01-Practica02 -Dsonar.organization=benjaminct13 -Dsonar.host.url=https://sonarcloud.io
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
