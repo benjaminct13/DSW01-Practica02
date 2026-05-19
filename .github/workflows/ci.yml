@@ -62,10 +62,11 @@ jobs:
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
-        working-directory: apps/backend
         with:
-          organization: benjaminct13
-          projectKey: benjaminct13_DSW01-Practica02
+          projectBaseDir: apps/backend
+          args: >-
+            -Dsonar.organization=benjaminct13
+            -Dsonar.projectKey=benjaminct13_DSW01-Practica02
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
