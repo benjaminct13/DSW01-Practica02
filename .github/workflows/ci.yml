@@ -69,9 +69,13 @@ jobs:
           java-version: '17'
           cache: maven
 
+      - name: Build backend
+        working-directory: apps/backend
+        run: mvn -B -ntp clean package -DskipTests
+
       - name: SonarCloud Analysis
         working-directory: apps/backend
-        run: mvn -B sonar:sonar -Dsonar.projectKey=benjaminct13_DSW01-Practica02 -Dsonar.organization=benjaminct13 -Dsonar.host.url=https://sonarcloud.io
+        run: mvn -B sonar:sonar -Dsonar.projectKey=benjaminct13_DSW01-Practica02 -Dsonar.organization=benjaminct13 -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.binaries=target/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
