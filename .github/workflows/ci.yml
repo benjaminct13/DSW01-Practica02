@@ -44,6 +44,9 @@ jobs:
           java-version: '17'
           cache: maven
 
+      - name: Wait for PostgreSQL
+        run: until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done
+
       - name: Build and test backend
         working-directory: apps/backend
         run: mvn -B -ntp clean verify
