@@ -100,4 +100,4 @@ jobs:
 
       - name: Build frontend
         working-directory: apps/frontend
-        run: npx ng build
+        run: ./node_modules/.bin/ng build
