@@ -5,7 +5,9 @@
   "scripts": {
     "start": "ng serve",
     "build": "ng build",
-    "test": "ng test"
+    "test": "ng test",
+    "cy:run": "cypress run",
+    "cy:open": "cypress open"
   },
   "dependencies": {
     "@angular/animations": "^19.0.0",
@@ -32,6 +34,7 @@
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
     "puppeteer": "^24.40.0",
+    "cypress": "^12.7.0",
     "typescript": "^5.6.3"
   }
 }
