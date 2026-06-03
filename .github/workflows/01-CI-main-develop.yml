@@ -1,10 +1,7 @@
-name: CI
+name: 01 - CI Backend and Frontend
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
