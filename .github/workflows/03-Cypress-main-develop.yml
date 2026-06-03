@@ -3,7 +3,7 @@ name: 03 - Cypress E2E Tests
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   cypress:

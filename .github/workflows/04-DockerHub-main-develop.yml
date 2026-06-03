@@ -3,7 +3,7 @@ name: 04 - Docker Hub Deployment
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   docker:
