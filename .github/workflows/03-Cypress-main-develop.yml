@@ -12,6 +12,20 @@ jobs:
   cypress:
     name: Cypress E2E Tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: dsw01_practica02
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d dsw01_practica02"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout repository
@@ -40,8 +54,16 @@ jobs:
         run: mvn -B -ntp spring-boot:run &
         timeout-minutes: 5
 
+      - name: Start frontend
+        working-directory: apps/frontend
+        run: npx ng serve &
+
+      - name: Wait for backend and frontend
+        working-directory: apps/frontend
+        run: npx wait-on http://localhost:4200 http://localhost:8080
+
       - name: Run Cypress tests
         working-directory: apps/frontend
-        run: npm run cypress:run
+        run: npx cypress run
         env:
           CYPRESS_BASE_URL: http://localhost:8080

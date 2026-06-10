@@ -41,5 +41,5 @@ jobs:
 
       - name: Build frontend
         working-directory: apps/frontend
-        run: npm run build
+        run: npx ng build
 
