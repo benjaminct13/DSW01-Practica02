@@ -2,16 +2,16 @@ name: 03-Cypress-main-develop
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 on:
-  workflow_run:
-    workflows: ["02-Sonar-main-develop"]
-    types:
-      - completed
-    branches: [master]
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
   cypress:
     name: Cypress E2E Tests
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,10 +34,8 @@ jobs:
           fi
           if [ "$specs_count" -gt 0 ]; then
             echo "has_specs=true" >> "$GITHUB_OUTPUT"
-            echo "Found $specs_count Cypress spec file(s)."
           else
             echo "has_specs=false" >> "$GITHUB_OUTPUT"
-            echo "No Cypress specs found. E2E job will be skipped without failing CI."
           fi
       - name: Install Cypress (runtime)
         if: steps.cypress-specs.outputs.has_specs == 'true'
@@ -53,7 +51,7 @@ jobs:
           command: npx cypress run --e2e --spec "cypress/e2e/**/*.cy.{js,ts,jsx,tsx}" --config-file cypress.config.js
       - name: Cypress skipped notice
         if: steps.cypress-specs.outputs.has_specs != 'true'
-        run: echo "Cypress E2E skipped because no *.cy.* files were found in apps/frontend/."
+        run: echo "Cypress E2E skipped - no spec files found"
       - name: Upload Cypress screenshots on failure
         if: failure()
         uses: actions/upload-artifact@v4
