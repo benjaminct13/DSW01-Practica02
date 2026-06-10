@@ -56,4 +56,3 @@ jobs:
         working-directory: apps/frontend
         run: npm run build
 
-.gitignore 
