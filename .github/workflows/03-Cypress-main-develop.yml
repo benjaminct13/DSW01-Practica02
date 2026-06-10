@@ -49,9 +49,16 @@ jobs:
           java-version: '17'
           cache: maven
 
+      - name: Wait for PostgreSQL
+        run: until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done
+
       - name: Start backend
         working-directory: apps/backend
         run: mvn -B -ntp spring-boot:run &
+        env:
+          APP_DB_URL: jdbc:postgresql://localhost:5432/dsw01_practica02
+          APP_DB_USERNAME: postgres
+          APP_DB_PASSWORD: postgres
         timeout-minutes: 5
 
       - name: Start frontend
