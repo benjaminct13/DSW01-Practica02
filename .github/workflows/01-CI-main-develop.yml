@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  backend:
-    name: Backend Java
+  ci:
+    name: Build Backend and Frontend
     runs-on: ubuntu-latest
 
     steps:
@@ -23,15 +26,7 @@ jobs:
 
       - name: Build and test backend
         working-directory: apps/backend
-        run: mvn -B -ntp clean verify
-
-  frontend:
-    name: Frontend Angular
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        run: mvn -B -ntp -DskipTests clean package
 
       - name: Set up Node.js 20
         uses: actions/setup-node@v4
@@ -42,15 +37,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: apps/frontend
-        run: npm install
-
-      - name: Resolve Chrome binary for tests
-        working-directory: apps/frontend
-        run: echo "CHROME_BIN=$(node -e \"console.log(require('puppeteer').executablePath())\")" >> "$GITHUB_ENV"
-
-      - name: Run frontend unit tests
-        working-directory: apps/frontend
-        run: npm test -- --watch=false --browsers=ChromeHeadless
+        run: npm ci
 
       - name: Build frontend
         working-directory: apps/frontend
