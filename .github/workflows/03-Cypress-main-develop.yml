@@ -1,4 +1,4 @@
-name: 03 - Cypress E2E Tests
+name: 03-Cypress-main-develop
 
 on:
   push:

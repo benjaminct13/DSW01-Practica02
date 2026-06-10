@@ -1,4 +1,4 @@
-name: 04 - Docker Hub Deployment
+name: 04-DockerHub-main-develop
 
 on:
   push:

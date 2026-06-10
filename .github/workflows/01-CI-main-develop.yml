@@ -1,4 +1,4 @@
-name: 01 - CI Backend and Frontend
+name: 01-CI-main-develop
 
 on:
   push:
