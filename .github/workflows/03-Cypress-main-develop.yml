@@ -70,11 +70,11 @@ jobs:
 
       - name: Start frontend
         working-directory: apps/frontend
-        run: npx ng serve &
+        run: npx ng serve --port 4200 --host 0.0.0.0 --no-live-reload &
 
       - name: Wait for backend and frontend
         working-directory: apps/frontend
-        run: npx wait-on http://localhost:4200 http://localhost:8080/actuator/health --timeout 120000
+        run: npx wait-on http://localhost:4200 http://localhost:8080/actuator/health --timeout 180000
 
       - name: Run Cypress tests
         working-directory: apps/frontend
