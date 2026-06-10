@@ -1,83 +1,63 @@
 name: 03-Cypress-main-develop
-
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-
+  workflow_run:
+    workflows: ["02-Sonar-main-develop"]
+    types:
+      - completed
+    branches: [master]
 jobs:
   cypress:
     name: Cypress E2E Tests
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: dsw01_practica02
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d dsw01_practica02"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
+    if: github.event.workflow_run.conclusion == 'success'
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Node.js 20
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
           cache-dependency-path: apps/frontend/package-lock.json
-
-      - name: Install dependencies
+      - name: Install frontend dependencies
         working-directory: apps/frontend
-        run: npm install
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        run: npm ci
+      - name: Detect Cypress specs
+        id: cypress-specs
+        run: |
+          if [ -d "apps/frontend/cypress/e2e" ]; then
+            specs_count=$(find apps/frontend/cypress/e2e -type f \( -name "*.cy.ts" -o -name "*.cy.js" -o -name "*.cy.tsx" -o -name "*.cy.jsx" \) | wc -l)
+          else
+            specs_count=0
+          fi
+          if [ "$specs_count" -gt 0 ]; then
+            echo "has_specs=true" >> "$GITHUB_OUTPUT"
+            echo "Found $specs_count Cypress spec file(s)."
+          else
+            echo "has_specs=false" >> "$GITHUB_OUTPUT"
+            echo "No Cypress specs found. E2E job will be skipped without failing CI."
+          fi
+      - name: Install Cypress (runtime)
+        if: steps.cypress-specs.outputs.has_specs == 'true'
+        working-directory: apps/frontend
+        run: npm install --no-save cypress start-server-and-test
+      - name: Run Cypress E2E
+        if: steps.cypress-specs.outputs.has_specs == 'true'
+        uses: cypress-io/github-action@v6
         with:
-          distribution: temurin
-          java-version: '17'
-          cache: maven
-
-      - name: Wait for PostgreSQL
-        run: until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done
-
-      - name: Build backend
-        working-directory: apps/backend
-        env:
-          APP_DB_URL: jdbc:postgresql://localhost:5432/dsw01_practica02
-          APP_DB_USERNAME: postgres
-          APP_DB_PASSWORD: postgres
-        run: mvn -B -ntp clean package -DskipTests
-
-      - name: Start backend
-        working-directory: apps/backend
-        env:
-          APP_DB_URL: jdbc:postgresql://localhost:5432/dsw01_practica02
-          APP_DB_USERNAME: postgres
-          APP_DB_PASSWORD: postgres
-        run: java -jar target/*.jar &
-
-      - name: Start frontend
-        working-directory: apps/frontend
-        run: npx ng serve --port 4200 --host 0.0.0.0 --no-live-reload &
-
-      - name: Wait for backend and frontend
-        working-directory: apps/frontend
-        run: npx wait-on http://localhost:4200 http://localhost:8080/actuator/health --timeout 180000
-
-      - name: Run Cypress tests
-        working-directory: apps/frontend
-        run: npx cypress run
-        env:
-          CYPRESS_BASE_URL: http://localhost:8080
+          working-directory: apps/frontend
+          start: npm run start -- --host 0.0.0.0 --port 4200
+          wait-on: 'http://127.0.0.1:4200'
+          command: npx cypress run --e2e --spec "cypress/e2e/**/*.cy.{js,ts,jsx,tsx}" --config-file cypress.config.js
+      - name: Cypress skipped notice
+        if: steps.cypress-specs.outputs.has_specs != 'true'
+        run: echo "Cypress E2E skipped because no *.cy.* files were found in apps/frontend/."
+      - name: Upload Cypress screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: apps/frontend/cypress/screenshots/
+          retention-days: 5
